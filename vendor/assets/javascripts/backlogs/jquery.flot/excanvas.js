@@ -115,13 +115,13 @@ if (!document.createElement('canvas').getContext) {
 
   var G_vmlCanvasManager_ = {
     init: function(opt_doc) {
-      if (/MSIE/.test(navigator.userAgent) && !window.opera) {
+      /*if (/MSIE/.test(navigator.userAgent) && !window.opera) {
         var doc = opt_doc || document;
         // Create a dummy element so that IE will allow canvas elements to be
         // recognized.
         doc.createElement('canvas');
         doc.attachEvent('onreadystatechange', bind(this.init_, this, doc));
-      }
+      }*/
     },
 
     init_: function(doc) {

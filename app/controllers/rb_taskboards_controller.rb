@@ -39,7 +39,8 @@ class RbTaskboardsController < RbApplicationController
   helper :taskboards
 
   def show
-    @statuses     = Type.find(Task.type).statuses
+    @statuses = Workflow.available_statuses(@project)
+    #@statuses     = Type.find(Task.type).statuses
     @story_ids    = @sprint.stories(@project).map(&:id)
     @last_updated = Task.children_of(@story_ids)
                         .order('updated_at DESC')
