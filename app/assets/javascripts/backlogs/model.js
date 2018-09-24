@@ -181,7 +181,12 @@ RB.Model = (function ($) {
                 fieldType = field.attr('fieldtype') || 'input';
 
                 if (!fieldLabel) {
-                    fieldLabel = fieldName.replace(/_/ig, " ").replace(/ id$/ig, "");
+                    // fieldLabel = fieldName.replace(/_/ig, " ").replace(/ id$/ig, "");
+                    switch (fieldName) {
+                        case 'subject' : fieldLabel = 'Описание'; break;
+                        case 'remaining_hours' : fieldLabel = 'Количество выполненных работ'; break;
+                        case 'note' : fieldLabel = 'Примечание'; break;
+                    }
                 }
 
                 if (fieldType === 'select') {
@@ -270,7 +275,7 @@ RB.Model = (function ($) {
                 var label = $('<label>')
                     .attr('class', 'inputfile')
                     .attr('for', 'attachments')
-                    .text('Add files');
+                    .text('Загрузить фото');
 
                 var input = $('<input/>', {
                     type: 'file',
@@ -285,16 +290,33 @@ RB.Model = (function ($) {
                 input.change(function (e) {
                     Array.prototype.forEach.call(this.files, function (file) {
                         attachedFiles.push(file);
-                        var li = $('<li>').html('<a href="#">' + file.name + '</a>');
-                        var i = $('<i>').attr('class', 'icon-delete').attr('style', 'float: right; cursor: pointer').attr('id', file.name);
-
-                        //delete attachment click event
-                        i.click(function (e) {
-                           confirm( i.attr('id') +  " delete?");
-                        });
-                        li.append(i);
-                        $('#attached-files').append(li);
                     });
+                    RB.ajax({
+                        type: "POST",
+                        url: '/api/v3/work_packages/' + taskID + '/attachments',
+                        data: attachedFiles,
+                        contentType: 'multipart/form-data',
+                        success: function (data) {
+                            console.log(data);
+                        },
+                        error: function (x, t, e) {
+                            self.error(x, t, e);
+                        }
+                    });
+
+                    // Array.prototype.forEach.call(this.files, function (file) {
+                    //     attachedFiles.push(file);
+                    //     var li = $('<li>').html('<a href="#">' + file.name + '</a>');
+                    //     var i = $('<i>').attr('class', 'icon-delete').attr('style', 'float: right; cursor: pointer').attr('id', file.name);
+                    //
+                    //     //delete attachment click event
+                    //     i.click(function (e) {
+                    //        confirm( i.attr('id') +  " delete?");
+                    //     });
+                    //     li.append(i);
+                    //     $('#attached-files').append(li);
+                    //
+                    // });
                 });
 
                 editor.append(label);
@@ -483,7 +505,6 @@ RB.Model = (function ($) {
                 self = this,
                 editors = j.find('.editor'),
                 saveDir;
-            console.log(taskID);
 
             // Copy the values from the fields to the proper html elements
             editors.each(function (index) {
@@ -513,7 +534,7 @@ RB.Model = (function ($) {
 
             // Get the save directives.
             saveDir = self.saveDirectives();
-
+            console.log(saveDir);
             self.beforeSave();
 
             self.unmarkError();
